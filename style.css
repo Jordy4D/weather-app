@@ -29,3 +29,10 @@ body {
     padding: 2px 4px;
 }
 
+.temp-number {
+    color: black;
+}
+
+#todays-temp-number {
+    font-size: 48px;
+}

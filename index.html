@@ -4,13 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Forecast</title>
-    <script src="script.js"></script>
+    <script src="script.js" defer ></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container" id="container">
         <div class="app-container" id="app-container">
-            <div class="weather-container" id="weather-container"></div>
+            <div class="weather-container" id="weather-container">
+                <div class="temp-container" id="temp-container">
+                    <p class="temp-number" id="todays-temp-number"></p>
+                </div>
+            </div>
             <div class="search-controls" id="search-controls">
                 <input type="text" class="get-location" id="get-location" 
                         placeholder="Enter zip code or city">
