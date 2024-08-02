@@ -27,29 +27,41 @@ async function getWeather(city) {
 
         console.log(weatherData)
         
-        tempDisplayToday.textContent = weatherData.currentConditions.temp + "°"
+        tempDisplayToday.textContent = Math.round(weatherData.currentConditions.temp) + "°"
         cityNameTitle.textContent = cityTrimmed[0]
 }
 
 
 async function getForecast(cityDays) {
     const cityForecast = await cityDays
-
+    forecast.innerHTML = ''
     console.log(cityForecast[0])
 
-    for (let i = 0 ; i < cityForecast.length - 5 ; i++) {
-        const div = document.createElement('div')
-        div.className = "forecast-box"
-        const h2 = document.createElement('h2')
-        const h3 = document.createElement('h3')
-        h3.className = "forecast-date"
+    for (let i = 1 ; i < cityForecast.length - 4 ; i++) {
+        const cardDiv = document.createElement('div')
+        cardDiv.className = "forecast-box"
+        const tempsDiv = document.createElement('div')
+        const daySpan = document.createElement('span')
+        const highTempSpan = document.createElement('span')
+        const lowTempSpan = document.createElement('span')
+
+        tempsDiv.className = "temps-box"
+        daySpan.className = "forecast-date"
+        highTempSpan.className = "forecast-high"
+        lowTempSpan.className = "forecast-low"
+
         
-        h2.textContent = Math.round(cityForecast[i].tempmax) + "°"
-        h3.textContent = convertDate(cityForecast[i].datetime)
+        daySpan.textContent = convertDate(cityForecast[i].datetime)
+        highTempSpan.textContent = Math.round(cityForecast[i].tempmax) + "°"
+        lowTempSpan.textContent = Math.round(cityForecast[i].tempmin) + "°"
         
-        forecast.appendChild(div)
-        div.appendChild(h2)
-        div.appendChild(h3)
+
+        forecast.appendChild(cardDiv)
+        cardDiv.appendChild(daySpan)
+        cardDiv.appendChild(tempsDiv)
+        tempsDiv.appendChild(highTempSpan)
+        tempsDiv.appendChild(lowTempSpan)
+
 
     }
     
@@ -61,8 +73,9 @@ async function getForecast(cityDays) {
 
 function convertDate(date) {
     return new Date(date).toLocaleDateString('en-US', {
-        day: '2-digit',
-        month: '2-digit',
+        weekday: 'short',
+        // day: 'short',
+        // month: 'short',
       })
 }
 
