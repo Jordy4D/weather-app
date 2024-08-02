@@ -7,6 +7,14 @@ body {
     background-color: darkslategray;
 }
 
+h2 {
+    font-size: 18px;
+}
+
+h3 {
+    font-size: 12px;
+}
+
 .app-container {
     display: flex;
     align-items: center;
@@ -14,13 +22,18 @@ body {
 }
 
 .weather-container {
-    min-width: 25%;
-    width: 300px;
+    min-width: 60%;
+    width: 800px;
     min-height: 25%;
     height: 300px;
     background-color: white;
     border-radius: 5px;
     margin: 12px 0;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    justify-items: center;
+    align-content: center;
 }
 
 .get-location {
@@ -29,10 +42,52 @@ body {
     padding: 2px 4px;
 }
 
+.city-title {
+    grid-column: 3 / 6;
+    grid-row: 1;
+}
+
 .temp-number {
     color: black;
 }
 
 #todays-temp-number {
     font-size: 48px;
+}
+
+.temp-container {
+    grid-column: 3 / 6;
+    grid-row: 2;
+    border: 1px solid black;
+    width: fit-content;
+ 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+#forecast-container {
+    display: flex;    
+    border: 1px solid black;
+    width: 100%;
+    grid-row: 3;
+    grid-column: 1 / 8;
+    justify-content: space-around;
+    /* flex: 1 1 0px; */
+    
+}
+
+.forecast-box {
+    display: flex;
+    flex-basis: 100%;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+.forecast-date {
+    justify-self: baseline;
 }
