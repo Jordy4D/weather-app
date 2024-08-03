@@ -68,8 +68,8 @@ async function getForecast(city) {
 
         forecast.appendChild(cardDiv)
         cardDiv.appendChild(daySpan)
-        cardDiv.appendChild(tempsDiv)
         cardDiv.appendChild(icon)
+        cardDiv.appendChild(tempsDiv)
         tempsDiv.appendChild(highTempSpan)
         tempsDiv.appendChild(lowTempSpan)
 
@@ -103,7 +103,7 @@ async function getTodaysHourly(city) {
 
 
         hourlyDiv.textContent = convertTimeToHours(cityHourly[i].datetime)
-        tempSpan.textContent = Math.round(cityHourly[i].temp)
+        tempSpan.textContent = Math.round(cityHourly[i].temp) + "°"
         icon.src = `./assets/${cityHourly[i].icon}.png`
 
         hourly.appendChild(cardDiv)
