@@ -8,6 +8,8 @@ const getWeatherInput = document.getElementById('get-location')
 const getUnitOfMeasure = document.getElementById('weather-unit')
 
 const today = new Date()
+const tomorrow = new Date()
+tomorrow.setDate(tomorrow.getDate() + 1)
 
 
 let cityPlaceholder = "Fort Wayne IN"
@@ -29,10 +31,10 @@ async function getWeather(city) {
         getTodaysHourly(weatherData.days[0].hours)
         getForecast(weatherData.days)
         
+        console.log(weatherData)
         console.log(weatherData.days)
         console.log(weatherData.days[0].hours)
-
-        console.log(weatherData)
+        getNext48Hours(weatherData.days[0], weatherData.days[1])
         
         tempDisplayToday.textContent = Math.round(weatherData.currentConditions.temp) + "°"
         cityNameTitle.textContent = cityTrimmed[0]
@@ -86,7 +88,8 @@ async function getTodaysHourly(city) {
     const cityHourly = await city
     hourly.innerHTML = ''
     
-    for (let i = today.getHours() ; i <= today.getHours() + 10 ; i++) {
+    for (let i = today.getHours() ; i <= today.getHours() + 10 ; i++) { 
+        //** Fix condition to pull from tomorrow's ^^^^^data in the afternoon 
         const cardDiv = document.createElement('div')
         cardDiv.className = "hourly-box"
         const hourlyDiv = document.createElement('div')
@@ -117,16 +120,37 @@ async function getTodaysHourly(city) {
 
 }
 
+function getNext48Hours(dateA, dateB) {
+    
+    let currentHour = today.getHours()
+    let todayHoursArr = dateA.hours.map(function(obj) {
+        if (obj === 0o0) {
+            obj = 12
+        }
+        return obj.datetime
+    })
+
+    let tomorrowHoursArr = dateB.hours.map(function(obj) {
+        return convertTimeToHours(obj.datetime)
+    })
+    // today. + convertTimeToHours(tomorrow.datetime)
+    
+    // hours.splice(hours.indexOf(0), 1, 12)
+    // let newArr = tomorrowHoursArr.push(todayHoursArr)
+
+    return console.log(tomorrowHoursArr)
+}
+
 function convertTimeToHours(time) {
     const fullTime = time
     const hours = fullTime.slice(0,2)
     // let output
-
     if (hours > 12) {
-        return hours - 12 + "pm"
+        return hours - 12
 
     } else {
-        return hours + "am"
+        
+        return hours.substring(1)
     }
 }
 
