@@ -1,10 +1,14 @@
 const cityNameTitle = document.getElementById('city-title')
 const tempDisplayToday = document.getElementById('todays-temp-number')
+const hourly = document.getElementById('hourly-container')
 const forecast = document.getElementById('forecast-container')
 
 const getWeatherSubmit = document.getElementById('search-input')
 const getWeatherInput = document.getElementById('get-location')
 const getUnitOfMeasure = document.getElementById('weather-unit')
+
+const today = new Date()
+
 
 let cityPlaceholder = "Fort Wayne IN"
 let unitOfMeasure = "us"
@@ -22,8 +26,11 @@ async function getWeather(city) {
             return item.trim()
         })
 
+        getTodaysHourly(weatherData.days[0].hours)
         getForecast(weatherData.days)
+        
         console.log(weatherData.days)
+        console.log(weatherData.days[0].hours)
 
         console.log(weatherData)
         
@@ -42,16 +49,19 @@ async function getForecast(city) {
         cardDiv.className = "forecast-box"
         const tempsDiv = document.createElement('div')
         const daySpan = document.createElement('span')
+        const icon = document.createElement('img')
         const highTempSpan = document.createElement('span')
         const lowTempSpan = document.createElement('span')
 
         tempsDiv.className = "temps-box"
         daySpan.className = "forecast-date"
+        icon.className = "weather-icon"
         highTempSpan.className = "forecast-high"
         lowTempSpan.className = "forecast-low"
 
         
-        daySpan.textContent = convertDate(cityForecast[i].datetime)
+        daySpan.textContent = convertForecastDate(cityForecast[i].datetime)
+        icon.src = `./assets/${cityForecast[i].icon}.png`
         highTempSpan.textContent = Math.round(cityForecast[i].tempmax) + "°"
         lowTempSpan.textContent = Math.round(cityForecast[i].tempmin) + "°"
         
@@ -59,14 +69,12 @@ async function getForecast(city) {
         forecast.appendChild(cardDiv)
         cardDiv.appendChild(daySpan)
         cardDiv.appendChild(tempsDiv)
+        cardDiv.appendChild(icon)
         tempsDiv.appendChild(highTempSpan)
         tempsDiv.appendChild(lowTempSpan)
 
 
-    }
-    
-    // cityForecast.forEach(element => {
-    // }); 
+    }   
 
 }
 
@@ -74,11 +82,67 @@ async function getTodaysPrecip(city) {
 
 }
 
+async function getTodaysHourly(city) {
+    const cityHourly = await city
+    hourly.innerHTML = ''
+    
+    for (let i = today.getHours() ; i <= today.getHours() + 10 ; i++) {
+        const cardDiv = document.createElement('div')
+        cardDiv.className = "hourly-box"
+        const hourlyDiv = document.createElement('div')
+        const tempSpan = document.createElement('span')
+        const precipSpan = document.createElement('span')
+        const iconDiv = document.createElement('div')
+        const icon = document.createElement('img')
+        // const hourlyIcon = cityHourly[i].icon
+        
+        hourlyDiv.className = "hourly-box"
+        tempSpan.className = "hourly-temp"
+        precipSpan.className = "hourly-precip"
+        icon.className = "weather-icon"
+
+
+        hourlyDiv.textContent = convertTimeToHours(cityHourly[i].datetime)
+        tempSpan.textContent = Math.round(cityHourly[i].temp)
+        icon.src = `./assets/${cityHourly[i].icon}.png`
+
+        hourly.appendChild(cardDiv)
+        cardDiv.appendChild(hourlyDiv)
+        cardDiv.appendChild(icon)
+        cardDiv.appendChild(tempSpan)
+
+
+    }
+
+
+}
+
+function convertTimeToHours(time) {
+    const fullTime = time
+    const hours = fullTime.slice(0,2)
+    // let output
+
+    if (hours > 12) {
+        return hours - 12 + "pm"
+
+    } else {
+        return hours + "am"
+    }
+}
+
 async function getForecastPrecip(city) {
 
 }
 
-function convertDate(date) {
+function convertForecastDate(date) {
+    return new Date(date).toLocaleDateString('en-US', {
+        weekday: 'short',
+        // day: 'short',
+        // month: 'short',
+      })
+}
+
+function convertHourlyDate(date) {
     return new Date(date).toLocaleDateString('en-US', {
         weekday: 'short',
         // day: 'short',
