@@ -32,8 +32,8 @@ async function getWeather(city) {
 }
 
 
-async function getForecast(cityDays) {
-    const cityForecast = await cityDays
+async function getForecast(city) {
+    const cityForecast = await city
     forecast.innerHTML = ''
     console.log(cityForecast[0])
 
@@ -66,8 +66,15 @@ async function getForecast(cityDays) {
     }
     
     // cityForecast.forEach(element => {
-    // });
-    
+    // }); 
+
+}
+
+async function getTodaysPrecip(city) {
+
+}
+
+async function getForecastPrecip(city) {
 
 }
 
