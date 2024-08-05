@@ -80,7 +80,14 @@ h3 {
     grid-row: 2;
     grid-column: 1 / 8;
     justify-content: space-around;
-    
+}
+
+/* #hourly-legend {
+    height: 30px;
+} */
+
+.hourly-box {
+    font-size: 12px;
 }
 
 #forecast-container {

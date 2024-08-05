@@ -1,5 +1,6 @@
 const cityNameTitle = document.getElementById('city-title')
 const tempDisplayToday = document.getElementById('todays-temp-number')
+const todayWeathericon = document.getElementById('todays-weather-icon')
 const hourly = document.getElementById('hourly-container')
 const forecast = document.getElementById('forecast-container')
 
@@ -34,8 +35,9 @@ async function getWeather(city) {
         console.log(weatherData)
         console.log(weatherData.days)
         console.log(weatherData.days[0].hours)
-        getNext48Hours(weatherData.days[0], weatherData.days[1])
         
+        const weatherIcon = document.createElement('img')
+        weatherIcon.src = weatherData.currentConditions.icon
         tempDisplayToday.textContent = Math.round(weatherData.currentConditions.temp) + "°"
         cityNameTitle.textContent = cityTrimmed[0]
 }
@@ -88,7 +90,7 @@ async function getTodaysHourly(city) {
     const cityHourly = await city
     hourly.innerHTML = ''
     
-    for (let i = today.getHours() ; i <= today.getHours() + 10 ; i++) { 
+    for (let i = 0 ; i <= cityHourly.length ; i++) { 
         //** Fix condition to pull from tomorrow's ^^^^^data in the afternoon 
         const cardDiv = document.createElement('div')
         cardDiv.className = "hourly-box"
@@ -102,12 +104,12 @@ async function getTodaysHourly(city) {
         hourlyDiv.className = "hourly-box"
         tempSpan.className = "hourly-temp"
         precipSpan.className = "hourly-precip"
-        icon.className = "weather-icon"
+        // icon.className = "weather-icon"
 
 
         hourlyDiv.textContent = convertTimeToHours(cityHourly[i].datetime)
         tempSpan.textContent = Math.round(cityHourly[i].temp) + "°"
-        icon.src = `./assets/${cityHourly[i].icon}.png`
+        // icon.src = `./assets/${cityHourly[i].icon}.png`
 
         hourly.appendChild(cardDiv)
         cardDiv.appendChild(hourlyDiv)
@@ -124,33 +126,36 @@ function getNext48Hours(dateA, dateB) {
     
     let currentHour = today.getHours()
     let todayHoursArr = dateA.hours.map(function(obj) {
-        if (obj === 0o0) {
-            obj = 12
-        }
+        
         return obj.datetime
     })
 
     let tomorrowHoursArr = dateB.hours.map(function(obj) {
-        return convertTimeToHours(obj.datetime)
+        return obj.datetime
     })
     // today. + convertTimeToHours(tomorrow.datetime)
     
     // hours.splice(hours.indexOf(0), 1, 12)
     // let newArr = tomorrowHoursArr.push(todayHoursArr)
 
-    return console.log(tomorrowHoursArr)
+    return console.log(todayHoursArr.concat(tomorrowHoursArr))
 }
 
 function convertTimeToHours(time) {
     const fullTime = time
     const hours = fullTime.slice(0,2)
     // let output
+
+
     if (hours > 12) {
         return hours - 12
 
-    } else {
+    } else if (hours > 9 && hours < 13) {
         
+        return hours
+    } else {
         return hours.substring(1)
+
     }
 }
 
