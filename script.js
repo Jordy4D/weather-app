@@ -29,12 +29,23 @@ async function getWeather(city) {
             return item.trim()
         })
 
-        getTodaysHourly(weatherData.days[0].hours)
-        getForecast(weatherData.days)
+        const weatherDays = weatherData.days
+        const todaysHours = weatherData.days[0].hours
+        const todaysPrecip = await weatherData.days[0].precipprob
+        const todaysHourlyPrecip = [];
+        
+
+        todaysHours.forEach((obj) => {
+            todaysHourlyPrecip.push(obj.precipprob)
+        })
+
+        getTodaysHourly(todaysHours)
+        getForecast(weatherDays)
         
         console.log(weatherData)
-        console.log(weatherData.days)
-        console.log(weatherData.days[0].hours)
+        console.log(weatherDays)
+        console.log(todaysHours)
+        console.log("today's Hourly Precip is: " + `${todaysHourlyPrecip}`)
         
         const weatherIcon = document.createElement('img')
         weatherIcon.src = weatherData.currentConditions.icon
