@@ -1,6 +1,10 @@
 const cityNameTitle = document.getElementById('city-title')
-const tempDisplayToday = document.getElementById('todays-temp-number')
 const todayWeathericon = document.getElementById('todays-weather-icon')
+const TEMPDISPLAYTODAY = document.getElementById('todays-temp-number')
+const TEMPCURRENTPRECIP = document.querySelector('#today-current-precip')
+const TEMPCURRENTHUMIDITY = document.querySelector('#today-current-humidity')
+const TEMPDISPLAYWIND = document.querySelector('#today-current-wind')
+
 const hourly = document.getElementById('hourly-container')
 const forecast = document.getElementById('forecast-container')
 
@@ -16,6 +20,13 @@ tomorrow.setDate(tomorrow.getDate() + 1)
 let cityPlaceholder = "Fort Wayne IN"
 let unitOfMeasure = "us"
 
+// will eventually change
+// async function weatherInit() {
+//     getWeather()
+// }
+
+
+// should probably just make this a factory
 async function getWeather(city) {
     
         if (unitOfMeasure === null) {
@@ -25,18 +36,17 @@ async function getWeather(city) {
 
         const response = await fetch('https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/' + city + '?unitGroup=' + unitOfMeasure + '&key=UB7HSQJ56P9RUPG56M8PFDFB3&contentType=json')
         const weatherData = await response.json()
-        const cityTrimmed = weatherData.resolvedAddress.split(", ").map(function(item) {
-            return item.trim()
-        })
+        
 
         const weatherDays = weatherData.days
         const todaysHours = weatherData.days[0].hours
-        const todaysPrecip = await weatherData.days[0].precipprob
-        const todaysHourlyPrecip = [];
+        const getTodaysPrecip = await weatherData.days[0].precipprob
+        const hourlyPrecip = [];
+        const hourlyWind = [];
         
 
         todaysHours.forEach((obj) => {
-            todaysHourlyPrecip.push(obj.precipprob)
+            hourlyPrecip.push(obj.precipprob)
         })
 
         getTodaysHourly(todaysHours)
@@ -45,12 +55,33 @@ async function getWeather(city) {
         console.log(weatherData)
         console.log(weatherDays)
         console.log(todaysHours)
-        console.log("today's Hourly Precip is: " + `${todaysHourlyPrecip}`)
-        
-        const weatherIcon = document.createElement('img')
-        weatherIcon.src = weatherData.currentConditions.icon
-        tempDisplayToday.textContent = Math.round(weatherData.currentConditions.temp) + "°"
-        cityNameTitle.textContent = cityTrimmed[0]
+        console.log(hourlyPrecip)
+        console.log("today's Hourly Precip is: " + hourlyPrecip)
+       
+        buildCurrentWeatherCard(weatherData)
+
+        // const weatherIcon = document.createElement('img')
+        // weatherIcon.src = weatherData.currentConditions.icon
+        // TEMPDISPLAYTODAY.textContent = Math.round(weatherData.currentConditions.temp) + "°"
+        // cityNameTitle.textContent = cityTrimmed[0]
+}
+
+function buildCurrentWeatherCard(cityDays) {
+    
+    const cityTrimmed = cityDays.resolvedAddress.split(", ").map(function(item) {
+        return item.trim()
+    })
+    
+    cityNameTitle.textContent = cityTrimmed[0]
+    const weatherIcon = document.createElement('img')
+    TEMPDISPLAYTODAY.textContent = Math.round(cityDays.currentConditions.temp) + "°"
+    todayWeathericon.appendChild(weatherIcon)
+    weatherIcon.src = `./assets/${cityDays.currentConditions.icon}.png`
+    
+    TEMPCURRENTPRECIP.textContent = Math.round(cityDays.currentConditions.precipprob) + "%"
+    TEMPCURRENTHUMIDITY.textContent = Math.round(cityDays.currentConditions.humidity) + "%"
+    TEMPDISPLAYWIND.textContent = Math.round(cityDays.currentConditions.windspeed) + "mph"
+
 }
 
 
@@ -60,38 +91,43 @@ async function getForecast(city) {
     console.log(cityForecast[0])
 
     for (let i = 1 ; i < cityForecast.length - 4 ; i++) {
-        const cardDiv = document.createElement('div')
-        cardDiv.className = "forecast-box"
-        const tempsDiv = document.createElement('div')
-        const daySpan = document.createElement('span')
-        const icon = document.createElement('img')
-        const highTempSpan = document.createElement('span')
-        const lowTempSpan = document.createElement('span')
 
-        tempsDiv.className = "temps-box"
-        daySpan.className = "forecast-date"
-        icon.className = "weather-icon"
-        highTempSpan.className = "forecast-high"
-        lowTempSpan.className = "forecast-low"
-
+        buildForecastCard(city[i])
         
-        daySpan.textContent = convertForecastDate(cityForecast[i].datetime)
-        icon.src = `./assets/${cityForecast[i].icon}.png`
-        highTempSpan.textContent = Math.round(cityForecast[i].tempmax) + "°"
-        lowTempSpan.textContent = Math.round(cityForecast[i].tempmin) + "°"
-        
-
-        forecast.appendChild(cardDiv)
-        cardDiv.appendChild(daySpan)
-        cardDiv.appendChild(icon)
-        cardDiv.appendChild(tempsDiv)
-        tempsDiv.appendChild(highTempSpan)
-        tempsDiv.appendChild(lowTempSpan)
-
-
     }   
 
 }
+
+function buildForecastCard(city) {
+    const cardDiv = document.createElement('div')
+    cardDiv.className = "forecast-box"
+    const tempsDiv = document.createElement('div')
+    const daySpan = document.createElement('span')
+    const icon = document.createElement('img')
+    const highTempSpan = document.createElement('span')
+    const lowTempSpan = document.createElement('span')
+
+    tempsDiv.className = "temps-box"
+    daySpan.className = "forecast-date"
+    icon.className = "weather-icon"
+    highTempSpan.className = "forecast-high"
+    lowTempSpan.className = "forecast-low"
+
+    
+    daySpan.textContent = convertForecastDate(city.datetime)
+    icon.src = `./assets/${city.icon}.png`
+    highTempSpan.textContent = Math.round(city.tempmax) + "°"
+    lowTempSpan.textContent = Math.round(city.tempmin) + "°"
+    
+
+    forecast.appendChild(cardDiv)
+    cardDiv.appendChild(daySpan)
+    cardDiv.appendChild(icon)
+    cardDiv.appendChild(tempsDiv)
+    tempsDiv.appendChild(highTempSpan)
+    tempsDiv.appendChild(lowTempSpan)
+}
+
 
 async function getTodaysPrecip(city) {
 
@@ -102,35 +138,37 @@ async function getTodaysHourly(city) {
     hourly.innerHTML = ''
     
     for (let i = 0 ; i <= cityHourly.length ; i++) { 
-        //** Fix condition to pull from tomorrow's ^^^^^data in the afternoon 
-        const cardDiv = document.createElement('div')
-        cardDiv.className = "hourly-box"
-        const hourlyDiv = document.createElement('div')
-        const tempSpan = document.createElement('span')
-        const precipSpan = document.createElement('span')
-        const iconDiv = document.createElement('div')
-        const icon = document.createElement('img')
-        // const hourlyIcon = cityHourly[i].icon
         
-        hourlyDiv.className = "hourly-box"
-        tempSpan.className = "hourly-temp"
-        precipSpan.className = "hourly-precip"
-        // icon.className = "weather-icon"
-
-
-        hourlyDiv.textContent = convertTimeToHours(cityHourly[i].datetime)
-        tempSpan.textContent = Math.round(cityHourly[i].temp) + "°"
-        // icon.src = `./assets/${cityHourly[i].icon}.png`
-
-        hourly.appendChild(cardDiv)
-        cardDiv.appendChild(hourlyDiv)
-        cardDiv.appendChild(icon)
-        cardDiv.appendChild(tempSpan)
-
+        buildHourlyTempCard(city[i])
 
     }
+}
 
 
+function buildHourlyTempCard(city) {
+    const cardDiv = document.createElement('div')
+    cardDiv.className = "hourly-box"
+    const hourlyDiv = document.createElement('div')
+    const tempSpan = document.createElement('span')
+    const precipSpan = document.createElement('span')
+    const iconDiv = document.createElement('div')
+    const icon = document.createElement('img')
+    // const hourlyIcon = city.icon
+    
+    hourlyDiv.className = "hourly-box"
+    tempSpan.className = "hourly-temp"
+    precipSpan.className = "hourly-precip"
+    // icon.className = "weather-icon"
+
+
+    hourlyDiv.textContent = convertTimeToHours(city.datetime)
+    tempSpan.textContent = Math.round(city.temp) + "°"
+    // icon.src = `./assets/${city.icon}.png`
+
+    hourly.appendChild(cardDiv)
+    cardDiv.appendChild(hourlyDiv)
+    cardDiv.appendChild(icon)
+    cardDiv.appendChild(tempSpan)
 }
 
 function getNext48Hours(dateA, dateB) {
@@ -196,7 +234,9 @@ getWeatherSubmit.addEventListener('click', (event) => {
     const newCity = getWeatherInput.value
     unitOfMeasure = getUnitOfMeasure.value
 
-    getWeather(newCity)
+    // weatherInit(newCity) <-- use this eventually
+    weatherInit(cityPlaceholder)
+
 })
 
 
