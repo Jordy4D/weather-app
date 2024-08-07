@@ -1,5 +1,7 @@
+import WeatherByDay from "./weatherDay.js"
+
 const cityNameTitle = document.getElementById('city-title')
-const todayWeathericon = document.getElementById('todays-weather-icon')
+const TODAYWEATHERICON = document.getElementById('todays-weather-icon')
 const TEMPDISPLAYTODAY = document.getElementById('todays-temp-number')
 const TEMPCURRENTPRECIP = document.querySelector('#today-current-precip')
 const TEMPCURRENTHUMIDITY = document.querySelector('#today-current-humidity')
@@ -21,10 +23,11 @@ let cityPlaceholder = "Fort Wayne IN"
 let unitOfMeasure = "us"
 
 // will eventually change
-// async function weatherInit() {
-//     getWeather()
+// async function weatherInit(city) {
+    
 // }
 
+let _10DayForcast = []
 
 // should probably just make this a factory
 async function getWeather(city) {
@@ -37,17 +40,41 @@ async function getWeather(city) {
         const response = await fetch('https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/' + city + '?unitGroup=' + unitOfMeasure + '&key=UB7HSQJ56P9RUPG56M8PFDFB3&contentType=json')
         const weatherData = await response.json()
         
+        
+        
+        weatherData.days.forEach((obj) => {
+            const refinedWeatherArr = new WeatherByDay(  obj.conditions,
+                                            obj.datetime,
+                                            obj.description,
+                                            obj.hours,
+                                            obj.humidity,
+                                            obj.icon,
+                                            obj.precip,
+                                            obj.precipprob,
+                                            obj.preciptype,
+                                            obj.temp,
+                                            obj.tempmax,
+                                            obj.tempmin,
+                                            obj.winddir,
+                                            obj.windspeed
+
+            ) 
+
+            _10DayForcast.push(refinedWeatherArr)
+            // console.log(refinedWeatherArr)
+        })
+
+        console.log(_10DayForcast[0])
+
+
 
         const weatherDays = weatherData.days
         const todaysHours = weatherData.days[0].hours
         const getTodaysPrecip = await weatherData.days[0].precipprob
         const hourlyPrecip = [];
         const hourlyWind = [];
-        
 
-        todaysHours.forEach((obj) => {
-            hourlyPrecip.push(obj.precipprob)
-        })
+        
 
         getTodaysHourly(todaysHours)
         getForecast(weatherDays)
@@ -55,7 +82,6 @@ async function getWeather(city) {
         console.log(weatherData)
         console.log(weatherDays)
         console.log(todaysHours)
-        console.log(hourlyPrecip)
         console.log("today's Hourly Precip is: " + hourlyPrecip)
        
         buildCurrentWeatherCard(weatherData)
@@ -64,9 +90,16 @@ async function getWeather(city) {
         // weatherIcon.src = weatherData.currentConditions.icon
         // TEMPDISPLAYTODAY.textContent = Math.round(weatherData.currentConditions.temp) + "°"
         // cityNameTitle.textContent = cityTrimmed[0]
+
+
 }
 
+getWeather(cityPlaceholder);
+
+
+
 function buildCurrentWeatherCard(cityDays) {
+    TODAYWEATHERICON.innerHTML = ''
     
     const cityTrimmed = cityDays.resolvedAddress.split(", ").map(function(item) {
         return item.trim()
@@ -75,8 +108,8 @@ function buildCurrentWeatherCard(cityDays) {
     cityNameTitle.textContent = cityTrimmed[0]
     const weatherIcon = document.createElement('img')
     TEMPDISPLAYTODAY.textContent = Math.round(cityDays.currentConditions.temp) + "°"
-    todayWeathericon.appendChild(weatherIcon)
     weatherIcon.src = `./assets/${cityDays.currentConditions.icon}.png`
+    TODAYWEATHERICON.appendChild(weatherIcon)
     
     TEMPCURRENTPRECIP.textContent = Math.round(cityDays.currentConditions.precipprob) + "%"
     TEMPCURRENTHUMIDITY.textContent = Math.round(cityDays.currentConditions.humidity) + "%"
@@ -240,5 +273,5 @@ getWeatherSubmit.addEventListener('click', (event) => {
 })
 
 
-getWeather(cityPlaceholder);
+
 
