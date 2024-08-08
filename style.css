@@ -114,9 +114,7 @@ h3 {
     height: 30px;
 } */
 
-.hourly-box {
-    font-size: 12px;
-}
+
 
 #forecast-container {
     grid-row: 3;
@@ -124,6 +122,7 @@ h3 {
     justify-content: space-around;
     
 }
+
 .hourly-box,
 .forecast-box {
     display: flex;
@@ -132,6 +131,15 @@ h3 {
     justify-content: space-between;
     align-items: center;
 
+}
+
+.no-display {
+    display: none;
+}
+
+#hourly-container > div:nth-of-type(3n + 1) > span.hourly-box-hour {
+    display: flex;
+    /* font-size: 12px; */
 }
 
 .forecast-date {
@@ -157,3 +165,4 @@ h3 {
 .weather-icon {
     width: 45px;
 }
+

@@ -62,23 +62,42 @@ export default class WeatherByDay {
           })
     }
 
+    getDailyHours() {
+        const hoursArr = [];
+        
+        this.hours.forEach((element) => {
+            let hourNum = parseInt(element.datetime.slice(0,2))
+            
+            if (hourNum === 0) {
+                hoursArr.push(12)
+            } else if (hourNum > 12) {
+                let x = hourNum - 12
+                hoursArr.push(x)
+            } else
+           
+            return hoursArr.push(hourNum);
+        })
+        return hoursArr
+    }
+    
+        
+    
+
     getCurrentHour() {
-        const fullTime = this.datetime
-        const hours = fullTime.slice(0,2)
+        const fullTime = this.hours.datetime
+        const hour = parseInt(fullTime.slice(0,2))
         // let output
 
 
-        if (hours === 0) {
+        if (hour === 0) {
             return 12;
-        }
-        if (hours > 12) {
-            return hours - 12
+        } else if (hour > 12) {
+            return hour - 12
 
-        } else if (hours > 9 && hours < 13) {
-            
-            return hours
+        } else if (hour > 9 && hour < 13) {
+            return hour
         } else {
-            return hours.substring(1)
+            return hour.substring(1)
 
         }
     }
@@ -100,23 +119,36 @@ export default class WeatherByDay {
         const hourlyPrecipArr = []
         const hours = this.hours
         hours.forEach((obj) => {
-            return hourlyPrecipArr.push(obj.precipprob)
+            return hourlyPrecipArr.push(`${Math.round(obj.precipprob)}%`)
         })
         return hourlyPrecipArr
     }
 
     // come back to this!!
-    // getHourlyWind() {
-    //     // const hourlyWindArr = []
-    //     const hours = this.hours
-    //     const hourlyWindArr = hours.map((element) => {
+    getHourlyWindSpeed() {
+        const hourlyWindSpeedArr = []
+        const hours = this.hours
+        hours.forEach((element) => {
             
-    //         return ({winddir: element.winddir, windspeed: element.windspeed})
-    //     })
-    //     return hours
-    // }
+            return hourlyWindSpeedArr.push(`${Math.round(element.windspeed)}mph`)
+        })
+        return hourlyWindSpeedArr
+    }
+
+    getHourlyWindDir() {
+        const hourlyWindDirArr = []
+        const hours = this.hours
+        hours.forEach((element) => {
+            
+            return hourlyWindDirArr.push(element.winddir)
+        })
+        return hourlyWindDirArr
+    }
 
     // get forecast conditions, humidity, high temps, low temps, precipchance, wind, long day, 
+
+
+
 
 }
 

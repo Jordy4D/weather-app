@@ -64,7 +64,7 @@ async function getWeather(city) {
             // console.log(refinedWeatherArr)
         })
 
-        console.log(_10DayForcast[0])
+        console.log(_10DayForcast[0].getHourlyWindSpeed())
 
 
 
@@ -76,13 +76,13 @@ async function getWeather(city) {
 
         
 
-        getTodaysHourly(todaysHours)
-        getForecast(weatherDays)
+        getTodaysHourly(_10DayForcast[0])
+        getForecast(_10DayForcast)
         
-        console.log(weatherData)
+        console.log(_10DayForcast[0].getDailyHours())
         console.log(weatherDays)
         console.log(todaysHours)
-        console.log("today's Hourly Precip is: " + hourlyPrecip)
+        console.log("today's Hourly Precip is: " + _10DayForcast[0].getHourlyPrecip())
        
         buildCurrentWeatherCard(weatherData)
 
@@ -118,14 +118,14 @@ function buildCurrentWeatherCard(cityDays) {
 }
 
 
-async function getForecast(city) {
-    const cityForecast = await city
+async function getForecast(arr) {
+    const cityForecast = await arr
     forecast.innerHTML = ''
-    console.log(cityForecast[0])
+    // console.log(cityForecast[0])
 
     for (let i = 1 ; i < cityForecast.length - 4 ; i++) {
 
-        buildForecastCard(city[i])
+        buildForecastCard(arr[i])
         
     }   
 
@@ -166,22 +166,32 @@ async function getTodaysPrecip(city) {
 
 }
 
-async function getTodaysHourly(city) {
-    const cityHourly = await city
+async function getTodaysHourly(obj) {
+
+    const cityHourly = await obj.hours
     hourly.innerHTML = ''
     
-    for (let i = 0 ; i <= cityHourly.length ; i++) { 
-        
-        buildHourlyTempCard(city[i])
+    cityHourly.forEach((element) => {
+        return buildHourlyCard(element)
 
-    }
+    })
+
+    // for (let i = 0 ; i <= cityHourly.length ; i++) { 
+        
+
+    // }
+}
+
+function getDailyForecastHours() {
+
 }
 
 
-function buildHourlyTempCard(city) {
-    const cardDiv = document.createElement('div')
-    cardDiv.className = "hourly-box"
+function buildHourlyCard(hourObj) {
+    // const cardDiv = document.createElement('div')
+    // cardDiv.className = "hourly-box"
     const hourlyDiv = document.createElement('div')
+    const hourlyTime = document.createElement('span')
     const tempSpan = document.createElement('span')
     const precipSpan = document.createElement('span')
     const iconDiv = document.createElement('div')
@@ -189,19 +199,21 @@ function buildHourlyTempCard(city) {
     // const hourlyIcon = city.icon
     
     hourlyDiv.className = "hourly-box"
+    hourlyTime.className = "hourly-box-hour no-display"
     tempSpan.className = "hourly-temp"
     precipSpan.className = "hourly-precip"
     // icon.className = "weather-icon"
 
 
-    hourlyDiv.textContent = convertTimeToHours(city.datetime)
-    tempSpan.textContent = Math.round(city.temp) + "°"
-    // icon.src = `./assets/${city.icon}.png`
+    hourlyTime.textContent = convertTimeToHour(`${hourObj.datetime}`)
+    tempSpan.textContent = `${(hourObj.temp)}`
+    // icon.src = `./assets/${hourObj.icon}.png`
 
-    hourly.appendChild(cardDiv)
-    cardDiv.appendChild(hourlyDiv)
-    cardDiv.appendChild(icon)
-    cardDiv.appendChild(tempSpan)
+    // hourly.appendChild(cardDiv)
+    hourly.appendChild(hourlyDiv)
+    hourlyDiv.appendChild(hourlyTime)
+    hourlyDiv.appendChild(icon)
+    hourlyDiv.appendChild(tempSpan)
 }
 
 function getNext48Hours(dateA, dateB) {
@@ -223,20 +235,22 @@ function getNext48Hours(dateA, dateB) {
     return console.log(todayHoursArr.concat(tomorrowHoursArr))
 }
 
-function convertTimeToHours(time) {
-    const fullTime = time
-    const hours = fullTime.slice(0,2)
+function convertTimeToHour(datetime) {
+    const fullDateTime = datetime
+    const hours = fullDateTime.slice(0,2)
     // let output
 
-
+    if (hours === "00") {
+        return "12am"
+    }
     if (hours > 12) {
-        return hours - 12
+        return `${hours - 12}pm`
 
     } else if (hours > 9 && hours < 13) {
         
-        return hours
+        return `${hours}am`
     } else {
-        return hours.substring(1)
+        return `${hours.substring(1)}am`
 
     }
 }
