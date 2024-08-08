@@ -8,6 +8,7 @@ const TEMPCURRENTHUMIDITY = document.querySelector('#today-current-humidity')
 const TEMPDISPLAYWIND = document.querySelector('#today-current-wind')
 
 const hourly = document.getElementById('hourly-container')
+const hourlyHours = document.getElementById('hourly-hours')
 const forecast = document.getElementById('forecast-container')
 
 const getWeatherSubmit = document.getElementById('search-input')
@@ -191,28 +192,33 @@ function buildHourlyCard(hourObj) {
     // const cardDiv = document.createElement('div')
     // cardDiv.className = "hourly-box"
     const hourlyDiv = document.createElement('div')
+    
+    const timeDiv = document.createElement('div')
     const hourlyTime = document.createElement('span')
+    
     const tempSpan = document.createElement('span')
     const precipSpan = document.createElement('span')
-    const iconDiv = document.createElement('div')
-    const icon = document.createElement('img')
+    // const iconDiv = document.createElement('div')
+    // const icon = document.createElement('img')
     // const hourlyIcon = city.icon
     
+    timeDiv.className = "hourly-legend"
     hourlyDiv.className = "hourly-box"
     hourlyTime.className = "hourly-box-hour no-display"
     tempSpan.className = "hourly-temp"
     precipSpan.className = "hourly-precip"
     // icon.className = "weather-icon"
 
-
+    hourlyDiv.setAttribute('title', `${convertTimeToHour(hourObj.datetime)} / ${Math.round(hourObj.temp)}°`)
     hourlyTime.textContent = convertTimeToHour(`${hourObj.datetime}`)
-    tempSpan.textContent = `${(hourObj.temp)}`
+    tempSpan.textContent = `${Math.round(hourObj.temp)}`
     // icon.src = `./assets/${hourObj.icon}.png`
 
     // hourly.appendChild(cardDiv)
     hourly.appendChild(hourlyDiv)
-    hourlyDiv.appendChild(hourlyTime)
-    hourlyDiv.appendChild(icon)
+    timeDiv.appendChild(hourlyTime)
+    hourlyHours.appendChild(timeDiv)
+    // hourlyDiv.appendChild(icon)
     hourlyDiv.appendChild(tempSpan)
 }
 
@@ -242,8 +248,9 @@ function convertTimeToHour(datetime) {
 
     if (hours === "00") {
         return "12am"
-    }
-    if (hours > 12) {
+    } else if (hours === "12") {
+        return "12pm"
+    } else if (hours > 12) {
         return `${hours - 12}pm`
 
     } else if (hours > 9 && hours < 13) {
