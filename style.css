@@ -43,9 +43,11 @@ h3 {
     padding: 2px 4px;
 }
 
-.city-title {
-    grid-column: 3 / 6;
+#city-title {
+    grid-column: 1;
     grid-row: 1;
+    justify-self: start;
+    padding: 8px 0 0 8px;
 }
 
 #icon-degrees-box {
@@ -55,7 +57,7 @@ h3 {
 }
 
 #icon-degrees-box img {
-    width: 90%!important;
+    width: 100%!important;
 }
 
 .temp-number {
@@ -63,27 +65,34 @@ h3 {
 }
 
 #todays-temp-number {
-    font-size: 48px;
+    font-size: 60px;
     font-weight: 600;
+    padding-left: 18px;
+}
+
+#todays-weather-icon {
+    padding-left: 12px;
+    size: 50px!important;
 }
 
 .temp-container {
-    grid-column: 1 / 3;
+    grid-column: 0 / 3;
     grid-row: 2;
-    border: 1px solid black;
-    width: fit-content;
+    /* border: 1px solid black; */
+    /* width: fit-content; */
  
     display: flex;
     align-items: flex-start;
     /* justify-content: space-evenly; */
     gap: 20px;
-    padding-top: 12px;
+    padding-top: 6px;
     
 }
 
 .aux-conditions,
 #today-conditions-box {
     font-size: 12px;
+    align-self: center;
 }
 
 .aux-conditions {
@@ -106,7 +115,7 @@ h3 {
 #hourly-container,
 #forecast-container {
     display: flex;    
-    border: 1px solid black;
+    border-top: 1px solid black;
     width: 100%;
     /* flex: 1 1 0px; */
     
@@ -119,13 +128,24 @@ h3 {
 
 }
 
+#hourly-hours > div > span,
+#hourly-container > div > span {
+    font-size: 12px;
+}
+
 #hourly-hours {
     grid-row: 5;
     grid-column: 1 / 8;
     width:100%;
     border: 1px solid black;
     justify-content: space-around;
+    display: flex;
+    flex-basis: 100%;
 }
+
+/* #hourly-legend {
+    
+} */
 
 #forecast-container {
     grid-row: 6;
@@ -134,8 +154,16 @@ h3 {
     
 }
 
-.hourly-box,
 .forecast-box {
+    display: flex;
+    flex-basis: 100%;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+
+}
+
+.hourly-box {
     display: flex;
     flex-basis: 100%;
     flex-direction: column;
@@ -148,7 +176,10 @@ h3 {
     display: none;
 }
 
-
+.hourly-weather-icon {
+    width:30px;
+    align-items: center;
+}
 
 #hourly-hours > div:nth-of-type(3n + 1) > span {
     display: flex;
