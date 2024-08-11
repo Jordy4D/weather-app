@@ -111,6 +111,10 @@ h3 {
     align-items: center;
 }
 
+.hourly-condition-choice {
+    cursor:pointer;
+}
+
 #hourly-hours,
 #hourly-container,
 #forecast-container {

@@ -19,11 +19,13 @@ const hourlyChoiceTemp = document.getElementById('hourly-choice-temp')
 const hourlyChoicePrecip = document.getElementById('hourly-choice-precip')
 const hourlyChoiceWind = document.getElementById('hourly-choice-wind')
 
+
 const today = new Date()
 const tomorrow = new Date()
 tomorrow.setDate(tomorrow.getDate() + 1)
 
-
+let currentDay = 0
+let currentConditionChoice = 'temp'
 let cityPlaceholder = "Fort Wayne IN"
 let unitOfMeasure = "us"
 
@@ -36,7 +38,9 @@ let _10DayForcast = []
 
 // should probably just make this a factory
 async function getWeather(city) {
-    
+        _10DayForcast = []
+        forecast.innerHTML = ''
+
         if (unitOfMeasure === null) {
             console.log("get unit error")
         }
@@ -81,7 +85,9 @@ async function getWeather(city) {
 
         
 
-        getHourly(_10DayForcast[0], 'precip')
+        getHourly(_10DayForcast[currentDay], currentConditionChoice)
+        // forecast.innerHTML = ''
+
         getForecast(_10DayForcast)
         
         console.log(_10DayForcast[0].getDailyHours())
@@ -100,7 +106,6 @@ async function getWeather(city) {
 }
 
 getWeather(cityPlaceholder);
-
 
 
 function buildCurrentWeatherCard(cityDays) {
@@ -124,21 +129,41 @@ function buildCurrentWeatherCard(cityDays) {
 
 
 async function getForecast(arr) {
-    const cityForecast = await arr
     forecast.innerHTML = ''
+    const cityForecast = await arr
     // console.log(cityForecast[0])
-
+    
     for (let i = 1 ; i < cityForecast.length - 4 ; i++) {
-
-        buildForecastCard(arr[i])
         
-    }   
+        buildForecastCard(arr[i], i)
+        
+        
+    }
+    
+    const forecastDays = document.querySelectorAll("#forecast-box")
+    
+    forecastDays.forEach((element) => {
+        element.addEventListener('click', (e) => {
+            currentDay = e.target.closest('div.forecast-box').getAttribute('index') - 1 
+
+            getHourly(_10DayForcast[currentDay], currentConditionChoice)
+            // console.log(e.target.closest('div.forecast-box').getAttribute('index'))
+
+            // console.log(arr.indexOf.call('div.forecast-box', e.target.data))
+
+            // getHourly(_10DayForcast[target.index], 'temp')
+            console.log('currentDay is: ' + currentDay)
+        })    
+    })
 
 }
 
-function buildForecastCard(city) {
+
+function buildForecastCard(city, index) {
     const cardDiv = document.createElement('div')
     cardDiv.className = "forecast-box"
+    cardDiv.id = "forecast-box"
+    cardDiv.setAttribute('index', index)
     const tempsDiv = document.createElement('div')
     const daySpan = document.createElement('span')
     const icon = document.createElement('img')
@@ -167,9 +192,7 @@ function buildForecastCard(city) {
 }
 
 
-async function getTodaysPrecip(city) {
 
-}
 
 async function getHourly(obj, condition) {
 
@@ -196,10 +219,7 @@ async function getHourly(obj, condition) {
     }
 
 
-    // for (let i = 0 ; i <= cityHourly.length ; i++) { 
-        
-
-    // }
+  
 }
 
 function getDailyForecastHours() {
@@ -229,10 +249,15 @@ function buildHourlyCard(hourObj, condition) {
     hourly.appendChild(hourlyDiv)
     
     if (condition === 'temp') {
+        const icon = document.createElement('img')
+        icon.className = "hourly-weather-icon"
+        
         hourlyDiv.setAttribute('title', `${convertTimeToHour(hourObj.datetime)} / ${Math.round(hourObj.temp)}°`)
         hourlyTime.textContent = convertTimeToHour(`${hourObj.datetime}`)
         conditionSpan.textContent = `${Math.round(hourObj.temp)}°`
         conditionSpan.className = "hourly-condition temp-condition"
+        icon.src = `./assets/${hourObj.icon}.png`
+        hourlyDiv.appendChild(icon)
 
     } else if (condition === 'precip') {
         const iconDiv = document.createElement('div')
@@ -242,10 +267,17 @@ function buildHourlyCard(hourObj, condition) {
         hourlyDiv.setAttribute('title', `${convertTimeToHour(hourObj.datetime)} / ${Math.round(hourObj.precipprob)}% Chance`)
         hourlyTime.textContent = convertTimeToHour(`${hourObj.datetime}`)
         conditionSpan.textContent = `${Math.round(hourObj.precipprob)}%`
+        
+        if (hourObj.preciptype === null) {
+            icon.src = `./assets/clear-day.png`
+        
+        } else if (hourObj.preciptype[0] === 'rain') {
+            icon.src = `./assets/rain.png`
+        }
 
-        icon.src = `./assets/${hourObj.icon}.png`
-
+        // icon.src = `./assets/${hourObj.icon}.png`
         hourlyDiv.appendChild(icon)
+        
         
 
     } else if (condition === 'wind') {
@@ -314,25 +346,29 @@ function convertHourlyDate(date) {
 
 
 getWeatherSubmit.addEventListener('click', (event) => {
+    forecast.innerHTML = ''
     event.preventDefault()
     const newCity = getWeatherInput.value
     unitOfMeasure = getUnitOfMeasure.value
 
+    getWeather(newCity)
     // weatherInit(newCity) <-- use this eventually
-    weatherInit(cityPlaceholder)
+    // weatherInit(cityPlaceholder)
 
 })
 
 hourlyChoiceTemp.addEventListener('click', (event) => {
     console.log(event)
-    getHourly(_10DayForcast[0], 'temp')
+    currentConditionChoice = 'temp'
+    getHourly(_10DayForcast[currentDay], currentConditionChoice)
 
 })
 
 
 hourlyChoicePrecip.addEventListener('click', () => {
     console.log("precip")
-    getHourly(_10DayForcast[0], 'precip')
+    currentConditionChoice = 'precip'
+    getHourly(_10DayForcast[currentDay], currentConditionChoice)
 
 
 })
@@ -340,9 +376,8 @@ hourlyChoicePrecip.addEventListener('click', () => {
 
 hourlyChoiceWind.addEventListener('click', () => {
     console.log("wind")
-    getHourly(_10DayForcast[0], 'wind')
+    currentConditionChoice = 'wind'
+    getHourly(_10DayForcast[currentDay], currentConditionChoice)
 
 })
-
-
 
