@@ -1,6 +1,9 @@
 import WeatherByDay from "./weatherDay.js"
 
+const dateDiv = document.getElementById('time-display')
 const cityNameTitle = document.getElementById('city-title')
+const conditionsDesc = document.getElementById('weather-description')
+const conditionIcon = document.getElementById('condition-icon')
 const TODAYWEATHERICON = document.getElementById('todays-weather-icon')
 const TEMPDISPLAYTODAY = document.getElementById('todays-temp-number')
 const TEMPCURRENTPRECIP = document.querySelector('#today-current-precip')
@@ -19,7 +22,6 @@ const hourlyChoiceTemp = document.getElementById('hourly-choice-temp')
 const hourlyChoicePrecip = document.getElementById('hourly-choice-precip')
 const hourlyChoiceWind = document.getElementById('hourly-choice-wind')
 
-
 const today = new Date()
 const tomorrow = new Date()
 tomorrow.setDate(tomorrow.getDate() + 1)
@@ -28,6 +30,7 @@ let currentDay = 0
 let currentConditionChoice = 'temp'
 let cityPlaceholder = "Fort Wayne IN"
 let unitOfMeasure = "us"
+let weatherDescription
 
 // will eventually change
 // async function weatherInit(city) {
@@ -49,7 +52,7 @@ async function getWeather(city) {
         const response = await fetch('https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/' + city + '?unitGroup=' + unitOfMeasure + '&key=UB7HSQJ56P9RUPG56M8PFDFB3&contentType=json')
         const weatherData = await response.json()
         
-        
+        console.log(weatherData)
         
         weatherData.days.forEach((obj) => {
             const refinedWeatherArr = new WeatherByDay(  obj.conditions,
@@ -73,17 +76,23 @@ async function getWeather(city) {
             // console.log(refinedWeatherArr)
         })
 
+        // weatherDescription = 
+
+        
         console.log(_10DayForcast[0].getHourlyWindSpeed())
-
-
-
+        
+        
+        
         const weatherDays = weatherData.days
         const todaysHours = weatherData.days[0].hours
         const getTodaysPrecip = await weatherData.days[0].precipprob
         const hourlyPrecip = [];
         const hourlyWind = [];
-
         
+        dateDiv.textContent = `Current Local Time: ${getTime(today)}`
+        
+        conditionsDesc.textContent = '' 
+        conditionsDesc.textContent = `${_10DayForcast[0].description}`;
 
         getHourly(_10DayForcast[currentDay], currentConditionChoice)
         // forecast.innerHTML = ''
@@ -111,11 +120,13 @@ getWeather(cityPlaceholder);
 function buildCurrentWeatherCard(cityDays) {
     TODAYWEATHERICON.innerHTML = ''
     
-    const cityTrimmed = cityDays.resolvedAddress.split(", ").map(function(item) {
-        return item.trim()
-    })
+    let cityTrimmed = cityDays.resolvedAddress.split(", ")
     
-    cityNameTitle.textContent = cityTrimmed[0]
+    console.log(cityTrimmed.pop())
+    console.log(cityTrimmed.join(", "))
+
+    
+    cityNameTitle.textContent = cityTrimmed.join(", ")
     const weatherIcon = document.createElement('img')
     TEMPDISPLAYTODAY.textContent = Math.round(cityDays.currentConditions.temp) + "°"
     weatherIcon.src = `./assets/${cityDays.currentConditions.icon}.png`
@@ -146,15 +157,26 @@ async function getForecast(arr) {
         element.addEventListener('click', (e) => {
             currentDay = e.target.closest('div.forecast-box').getAttribute('index') - 1 
 
+
+            
             getHourly(_10DayForcast[currentDay], currentConditionChoice)
             // console.log(e.target.closest('div.forecast-box').getAttribute('index'))
-
+            
             // console.log(arr.indexOf.call('div.forecast-box', e.target.data))
-
+            
             // getHourly(_10DayForcast[target.index], 'temp')
             console.log('currentDay is: ' + currentDay)
+            console.log(_10DayForcast[currentDay].icon)
         })    
     })
+    
+    const icon = document.createElement('img')
+    icon.src = `./assets/${_10DayForcast[currentDay].icon}.png`
+    conditionIcon.appendChild(icon)
+    
+    conditionsDesc.textContent = ''
+    conditionsDesc.textContent = _10DayForcast[currentDay].description
+    
 
 }
 
@@ -344,6 +366,14 @@ function convertHourlyDate(date) {
       })
 }
 
+function getTime(date) {
+    return new Date(date).toLocaleTimeString('en-US', {
+        hour: "numeric", 
+        minute: "2-digit",
+        hour12: "true"
+    })
+}
+
 
 getWeatherSubmit.addEventListener('click', (event) => {
     forecast.innerHTML = ''
@@ -359,6 +389,9 @@ getWeatherSubmit.addEventListener('click', (event) => {
 
 hourlyChoiceTemp.addEventListener('click', (event) => {
     console.log(event)
+    hourlyChoiceTemp.classList.add('condition-highlight')
+    hourlyChoicePrecip.classList.remove('condition-highlight')
+    hourlyChoiceWind.classList.remove('condition-highlight')
     currentConditionChoice = 'temp'
     getHourly(_10DayForcast[currentDay], currentConditionChoice)
 
@@ -367,6 +400,9 @@ hourlyChoiceTemp.addEventListener('click', (event) => {
 
 hourlyChoicePrecip.addEventListener('click', () => {
     console.log("precip")
+    hourlyChoiceTemp.classList.remove('condition-highlight')
+    hourlyChoicePrecip.classList.add('condition-highlight')
+    hourlyChoiceWind.classList.remove('condition-highlight')
     currentConditionChoice = 'precip'
     getHourly(_10DayForcast[currentDay], currentConditionChoice)
 
@@ -376,6 +412,9 @@ hourlyChoicePrecip.addEventListener('click', () => {
 
 hourlyChoiceWind.addEventListener('click', () => {
     console.log("wind")
+    hourlyChoiceTemp.classList.remove('condition-highlight')
+    hourlyChoicePrecip.classList.remove('condition-highlight')
+    hourlyChoiceWind.classList.add('condition-highlight')
     currentConditionChoice = 'wind'
     getHourly(_10DayForcast[currentDay], currentConditionChoice)
 

@@ -13,18 +13,26 @@
     <div class="container" id="container">
         <div class="app-container" id="app-container">
             <div class="weather-container" id="weather-container">
-                <div class="title-name" id="city-title"></div>
-                <div class="temp-container" id="temp-card">
+                <div class="time-display" id="time-display"></div>
+                <div class="dashboard-view" id="dashboard-view">
+                    <div class="temp-container" id="temp-card">
+                    <div class="title-name" id="city-title"></div>
                     <!-- <H2 class="temp-desc" id="current-temp-desc">Current Temperature:</H2> -->
                     <div class="icon-degrees-box" id="icon-degrees-box">
                         <div class="weather-icon" id="todays-weather-icon"></div>
                         <p class="temp-number" id="todays-temp-number"></p>
+                        <div class="today-conditions-box" id="today-conditions-box">
+                            <div class="aux-conditions">Precipitation: <span class="aux-condition-data" id="today-current-precip"></span></div>
+                            <div class="aux-conditions">Humidity: <span class="aux-condition-data" id="today-current-humidity"></span></div>
+                            <div class="aux-conditions">Wind: <span class="aux-condition-data" id="today-current-wind"></span></div>
+                            
+                        </div>
                     </div>
-                    <div class="today-conditions-box" id="today-conditions-box">
-                        <div class="aux-conditions">Precipitation: <span class="aux-condition-data" id="today-current-precip"></span></div>
-                        <div class="aux-conditions">Humidity: <span class="aux-condition-data" id="today-current-humidity"></span></div>
-                        <div class="aux-conditions">Wind: <span class="aux-condition-data" id="today-current-wind"></span></div>
-                        
+                    <div class="weather-outlook" id="weather-description"></div>
+                        <div class="condition-icon" id="condition-icon"></div>
+                        <!-- <div class="datetime-container" id="datetime-container">
+                            <span id="forecast-date"></span>
+                        </div> -->
                     </div>
                 </div>
                 <div class="hourly-conditions">
