@@ -42,14 +42,20 @@ let _10DayForcast = []
 // should probably just make this a factory
 async function getWeather(city) {
         _10DayForcast = []
-        forecast.innerHTML = ''
-
+        
         if (unitOfMeasure === null) {
             console.log("get unit error")
         }
 
 
         const response = await fetch('https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/' + city + '?unitGroup=' + unitOfMeasure + '&key=UB7HSQJ56P9RUPG56M8PFDFB3&contentType=json')
+        
+        if (response.status !== 200) {
+            throw new Error("Not a valid city or zip code")
+            console.log('error code: ' + response.status)
+        } 
+        
+        forecast.innerHTML = ''
         const weatherData = await response.json()
         
         console.log(weatherData)
@@ -376,12 +382,19 @@ function getTime(date) {
 
 
 getWeatherSubmit.addEventListener('click', (event) => {
-    forecast.innerHTML = ''
     event.preventDefault()
     const newCity = getWeatherInput.value
     unitOfMeasure = getUnitOfMeasure.value
+    
+    if (!newCity){
+        alert("Please enter a city or zip code")
+    } else {
+        conditionIcon.innerHTML = ''
 
-    getWeather(newCity)
+        forecast.innerHTML = ''
+        getWeather(newCity)
+    }
+
     // weatherInit(newCity) <-- use this eventually
     // weatherInit(cityPlaceholder)
 
