@@ -31,7 +31,7 @@ let currentConditionChoice = 'temp'
 let cityPlaceholder = "Fort Wayne IN"
 let unitOfMeasure = "us"
 let weatherDescription
-
+let previousCity
 // will eventually change
 // async function weatherInit(city) {
     
@@ -51,10 +51,13 @@ async function getWeather(city) {
         const response = await fetch('https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/' + city + '?unitGroup=' + unitOfMeasure + '&key=UB7HSQJ56P9RUPG56M8PFDFB3&contentType=json')
         
         if (response.status !== 200) {
-            throw new Error("Not a valid city or zip code")
+            alert("Not a valid city or zip code")
+            getWeather(previousCity)
             console.log('error code: ' + response.status)
         } 
         
+        previousCity = city
+
         forecast.innerHTML = ''
         const weatherData = await response.json()
         
